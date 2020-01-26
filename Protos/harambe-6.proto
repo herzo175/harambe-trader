@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package endpoints.harambe_6;
+
+service Predictor {
+    // Sends a prediction request
+    rpc Predict (PredictionRequest) returns (PredictionReply) {}
+    rpc Backtest (BacktestRequest) returns (BacktestReply) {}
+}
+
+// The request containing trend settings and symbol
+message PredictionRequest {
+    string symbol = 1;
+    int32 trend_length = 2;
+    string trend_start_date = 3; // Dates specified in yyyy-mm-dd format
+    string trend_end_date = 4;
+}
+
+// The response message containing the predictions
+message PredictionReply {
+    double val = 1;
+    double val_denorm = 2;
+}
+
+message BacktestRequest {
+    string symbol = 1;
+    int32 trend_length = 2;
+    string prediction_start_date = 3;
+    string prediction_end_date = 4;
+}
+
+message BacktestReply {
+    float percent_change = 1;
+}

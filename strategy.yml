@@ -1,0 +1,73 @@
+strategy:
+  # - name: "N Highest Backtest Weekly"
+  #   schedule: "0 17 * * 2" # TODO: cron validation
+  #   distributor:
+  #     type: log
+  #     partition: 80
+  #   selector:
+  #     type: n_highest_backtest
+  #     count: 4
+  #     config:
+  #       trend_length: 15
+  #       lookback_length: 60
+  #       pool:
+  #         - MSFT
+  #         - AAPL
+  #         - AMZN
+  #         - FB
+  #         - JPM
+  #         - GOOG
+  #         - JNJ
+  #         - V
+  #         - PG
+  #         - XOM
+  #         - BAC
+  #         - T
+  #         - DIS
+  #         - MA
+  #         - INTC
+  #         - VZ
+  #         - CVX
+  #         - WFC
+  #         - PFE
+  #         - KO
+  - name: highest_prediction_daily
+    schedule: "0 17 * * *" # TODO: cron validation # NOTE: cron in UTC
+    distributor:
+      type: equal
+      config:
+        side: long
+        pool:
+          reference:
+            step: highest_prediction_daily
+            section: selector
+    selector:
+      type: n_highest_prediction
+      count: 4
+      config:
+        trend_length: 15
+        filters:
+          percent_change_floor: 0
+          percent_change_ceiling: 10
+        pool:
+          symbols:
+            - MSFT
+            - AAPL
+            - AMZN
+            - FB
+            - JPM
+            - GOOG
+            - JNJ
+            - V
+            - PG
+            - XOM
+            - BAC
+            - T
+            - DIS
+            - MA
+            - INTC
+            - VZ
+            - CVX
+            - WFC
+            - PFE
+            - KO
