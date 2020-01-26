@@ -19,22 +19,34 @@ steps:
         - latest
         - ${DRONE_COMMIT_SHA}
 
-  - name: terraform
-    image: jmccann/drone-terraform:1
-    plan: true
-    sensitive: true
-    remote:
-      backend: S3
-      config:
-        access_key:
-          from_secret: TF_STATE_ACCESS_KEY
-        secret_key:
-          from_secret: TF_STATE_SECRET_KEY
-    vars:
-      version_tag: my-project
-    secrets:
-      do_token: DO_TOKEN
-      broker_api_key_id: BROKER_API_KEY_ID
-      broker_api_key_secret: BROKER_API_KEY_SECRET
-      datasource_token: DATASOURCE_TOKEN
-      database_connection_string: DATABASE_CONNECTION_STRING
+  - name: deploy
+    image: hashicorp/terraform
+    environment:
+      DO_TOKEN:  
+        from_secret: DO_TOKEN
+      BROKER_API_KEY_ID:  
+        from_secret: BROKER_API_KEY_ID
+      BROKER_API_KEY_SECRET:  
+        from_secret: BROKER_API_KEY_SECRET
+      DATASOURCE_TOKEN:  
+        from_secret: DATASOURCE_TOKEN
+      DATABASE_CONNECTION_STRING:  
+        from_secret: DATABASE_CONNECTION_STRING
+      TF_STATE_ACCESS_KEY:
+        from_secret: TF_STATE_ACCESS_KEY
+      TF_STATE_SECRET_KEY:
+        from_secret: TF_STATE_SECRET_KEY
+    commands:
+      - apk add --update make
+      - >
+        make init \
+          TF_STATE_ACCESS_KEY=$TF_STATE_ACCESS_KEY \
+          TF_STATE_SECRET_KEY=$TF_STATE_SECRET_KEY
+      - >
+        make deploy \
+          VERSION=$DRONE_COMMIT_SHA \
+          DO_TOKEN=$DO_TOKEN" \
+          BROKER_API_KEY_ID=$BROKER_API_KEY_ID" \
+          BROKER_API_KEY_SECRET=$BROKER_API_KEY_SECRET" \
+          DATASOURCE_TOKEN=$DATASOURCE_TOKEN" \
+          DATABASE_CONNECTION_STRING=$DATABASE_CONNECTION_STRING"
