@@ -38,15 +38,6 @@ steps:
         from_secret: TF_STATE_SECRET_KEY
     commands:
       - apk add --update make
-      - >
-        make init \
-          TF_STATE_ACCESS_KEY=$TF_STATE_ACCESS_KEY \
-          TF_STATE_SECRET_KEY=$TF_STATE_SECRET_KEY
-      - >
-        make deploy \
-          VERSION=$DRONE_COMMIT_SHA \
-          DO_TOKEN=$DO_TOKEN" \
-          BROKER_API_KEY_ID=$BROKER_API_KEY_ID" \
-          BROKER_API_KEY_SECRET=$BROKER_API_KEY_SECRET" \
-          DATASOURCE_TOKEN=$DATASOURCE_TOKEN" \
-          DATABASE_CONNECTION_STRING=$DATABASE_CONNECTION_STRING"
+      - printenv > .env
+      - make init
+      - make deploy VERSION=$DRONE_COMMIT_SHA
