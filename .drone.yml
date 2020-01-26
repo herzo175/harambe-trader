@@ -2,39 +2,39 @@ kind: pipeline
 name: deploy
 
 steps:
-  - compile:
-      image: mcr.microsoft.com/dotnet/core/aspnet:3.1
-      commands:
-        - dotnet publish -c build
+  - name: compile
+    image: mcr.microsoft.com/dotnet/core/aspnet:3.1
+    commands:
+      - dotnet publish -c build
 
-  - push-image:
-      image: plugins/docker
-      settings:
-        username:
-          from_secret: DOCKER_USERNAME
-        password:
-          from_secret: DOCKER_PASSWORD
-        repo: jeremyaherzog/harambe-trader
-        tags:
-          - latest
-          - ${DRONE_COMMIT_SHA}
+  - name: push-image
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKER_USERNAME
+      password:
+        from_secret: DOCKER_PASSWORD
+      repo: jeremyaherzog/harambe-trader
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA}
 
-  - terraform:
-      image: jmccann/drone-terraform:1
-      plan: true
-      sensitive: true
-      remote:
-        backend: S3
-        config:
-          access_key:
-            from_secret: TF_STATE_ACCESS_KEY
-          secret_key:
-            from_secret: TF_STATE_SECRET_KEY
-      vars:
-        version_tag: my-project
-      secrets:
-        do_token: DO_TOKEN
-        broker_api_key_id: BROKER_API_KEY_ID
-        broker_api_key_secret: BROKER_API_KEY_SECRET
-        datasource_token: DATASOURCE_TOKEN
-        database_connection_string: DATABASE_CONNECTION_STRING
+  - name: terraform
+    image: jmccann/drone-terraform:1
+    plan: true
+    sensitive: true
+    remote:
+      backend: S3
+      config:
+        access_key:
+          from_secret: TF_STATE_ACCESS_KEY
+        secret_key:
+          from_secret: TF_STATE_SECRET_KEY
+    vars:
+      version_tag: my-project
+    secrets:
+      do_token: DO_TOKEN
+      broker_api_key_id: BROKER_API_KEY_ID
+      broker_api_key_secret: BROKER_API_KEY_SECRET
+      datasource_token: DATASOURCE_TOKEN
+      database_connection_string: DATABASE_CONNECTION_STRING
