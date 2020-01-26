@@ -40,4 +40,4 @@ steps:
       - apk add --update make
       - printenv > .env
       - make init
-      - make deploy VERSION=$DRONE_COMMIT_SHA
+      - printf 'yes' | make deploy VERSION=$DRONE_COMMIT_SHA
